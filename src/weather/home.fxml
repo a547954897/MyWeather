@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weather.HomeController">
+   <children>
+      <Label fx:id="top_date" layoutX="14.0" layoutY="14.0" text="日期" />
+      <Label fx:id="top_city" layoutX="555.0" layoutY="14.0" onMouseClicked="#click_city" text="城市" />
+      <Pane id="weather_1" layoutY="30.0" prefHeight="370.0" prefWidth="200.0">
+         <children>
+            <Separator layoutX="200.0" layoutY="10.0" orientation="VERTICAL" prefHeight="300.0" />
+            <ImageView fx:id="img_one" fitHeight="70.0" fitWidth="70.0" layoutX="65.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="te_current" layoutX="48.0" layoutY="87.0" text="0">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Label>
+            <Label layoutX="95.0" layoutY="95.0" text="°C" />
+            <Label fx:id="te_current_text" layoutX="95.0" layoutY="112.0" text="晴（实时）" />
+            <Label layoutX="85.0" layoutY="177.0" text="Label" />
+            <Label layoutX="80.0" layoutY="209.0" text="Label" />
+            <Label layoutX="86.0" layoutY="249.0" text="Label" />
+         </children>
+      </Pane>
+      <Pane id="weather_2" layoutX="200.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
+         <children>
+            <Label fx:id="mon_two" layoutX="35.0" layoutY="22.0" text="周X" />
+            <ImageView fx:id="img_two" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
+            <Separator orientation="VERTICAL" prefHeight="300.0" />
+            <Label fx:id="date_two" layoutX="21.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
+         </children></Pane>
+      <Pane id="weather_3" layoutX="300.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
+         <children>
+            <ImageView fx:id="img_three" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
+            <Separator orientation="VERTICAL" prefHeight="300.0" />
+            <Label fx:id="mon_three" layoutX="35.0" layoutY="22.0" text="周X" />
+            <Label fx:id="date_three" layoutX="24.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
+         </children></Pane>
+      <Pane id="weather_4" layoutX="400.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
+         <children>
+            <Separator orientation="VERTICAL" prefHeight="300.0" />
+            <ImageView fx:id="img_four" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="mon_four" layoutX="35.0" layoutY="22.0" text="周X" />
+            <Label fx:id="date_four" layoutX="21.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
+         </children></Pane>
+
+      <Button fx:id="bt_city" layoutX="510.0" layoutY="14.0" onMouseClicked="#bt_click_city" prefWidth="50.0" text="搜索" visible="false" />
+      <Button fx:id="bt_ok" layoutX="570.0" layoutY="14.0" onMouseClicked="#bt_click_ok" prefWidth="50.0" text="确定" visible="false" />
+      <ComboBox fx:id="select_city" editable="true" layoutX="200.0" layoutY="14.0" prefWidth="300.0" visible="false" />
+
+   </children>
+</Pane>
