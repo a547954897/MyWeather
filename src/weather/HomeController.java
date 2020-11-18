@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import model.NowWeatherModel;
 import model.SeachCityModel;
 import model.ThreeDayWeatherModel;
@@ -23,16 +25,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class HomeController {
     public Label top_date, top_city; //顶部的当前日期和城市
-    public ImageView img_one, img_two, img_three, img_four; //天气图
-    public Label mon_two, mon_three, mon_four; //周几
+    public ImageView img_one, img_two, img_three; //天气图
+    public Label mon_two, mon_three; //周几
     public Button bt_city, bt_ok; //搜索按钮
     public ComboBox select_city;
+    public Label one_temp, two_temp, three_temp;  //温度
+    public Label one_wea, two_wea, three_wea;        //天气
+    public Label one_wind, two_wind, three_wind;     //风速
+    public Label date_two, date_three;               // 日期
 
     public Label te_current, te_current_text;  // 实况温度 实况描述
+
+    public HBox top_info;
+    public Pane top_input;
 
     SeachCityModel cityData; // api获取的搜索城市数据
     NowWeatherModel nowWeatherList; // 实况数据
@@ -116,7 +126,6 @@ public class HomeController {
 //        weekDays[w] 周几
         mon_two.setText(weekDays[two]);
         mon_three.setText(weekDays[three]);
-        mon_four.setText(weekDays[four]);
     }
 
     /**
@@ -217,6 +226,7 @@ public class HomeController {
 
 
         getNowWeatherDate(cityData.getLocation().get(selectIndex).getId());
+        getOtherWeather(cityData.getLocation().get(selectIndex).getId());
 
         // 根据选中的城市，获取其城市名 设置右上角名字标签
         top_city.setText(cityData.getLocation().get(selectIndex).getName() + "[切换城市]"); //城市名
@@ -229,7 +239,22 @@ public class HomeController {
     /**
      * 更新界面
      */
-    public void updateOtherPage() {
+    public void updateOtherPage(ThreeDayWeatherModel threeDayWeatherModel) {
+        List<ThreeDayWeatherModel.DailyBean> list = threeDayWeatherModel.getDaily();
+        one_temp.setText(list.get(0).getTempMin()+"°C~"+list.get(0).getTempMax());
+        two_temp.setText(list.get(1).getTempMin() + "°C~" + list.get(1).getTempMax());
+        three_temp.setText(list.get(2).getTempMin() + "°C~" + list.get(2).getTempMax());
+        one_wea.setText(list.get(0).getTextDay() + "转" + list.get(0).getTextNight());
+        two_wea.setText(list.get(1).getTextDay() + "转" + list.get(1).getTextNight());
+        three_wea.setText(list.get(2).getTextDay() + "转" + list.get(2).getTextNight());
+        one_wind.setText(list.get(0).getWindDirDay() + list.get(0).getWindScaleDay() + "级");
+        two_wind.setText(list.get(1).getWindDirDay() + list.get(1).getWindScaleDay() + "级");
+        three_wind.setText(list.get(2).getWindDirDay() + list.get(2).getWindScaleDay() + "级");
+        date_two.setText(list.get(1).getFxDate());
+        date_three.setText(list.get(2).getFxDate());
+        img_two.setImage(new Image("icon/" + list.get(1).getIconDay() + ".png"));
+        img_three.setImage(new Image("icon/" + list.get(2).getIconDay() + ".png"));
+
 
     }
 
@@ -251,11 +276,19 @@ public class HomeController {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                nowWeatherList = new Gson().fromJson(response.body().string(), NowWeatherModel.class);
+                String s = response.body().string();
+                nowWeatherList = new Gson().fromJson(s, NowWeatherModel.class);
+                System.out.println(s);
+
+                System.out.println(nowWeatherList.getNow().getIcon());
+                System.out.println("更新");
+
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        System.out.println("更新ui");
                         updateNowPage(nowWeatherList);
+
                     }
                 });
 
@@ -269,13 +302,19 @@ public class HomeController {
      * @param nowWeather
      */
     public void updateNowPage(NowWeatherModel nowWeather) {
+        System.out.println(nowWeather.toString());
         //当前实况天气
         te_current.setText(nowWeather.getNow().getTemp());
         // 实况天气文本描述
         te_current_text.setText(nowWeather.getNow().getText() + "[实况]");
+        System.out.println(nowWeather.getNow().getText());
 
         //实况天气图片
-        img_one.setImage(new Image("icon/" + matchIcon(nowWeather.getNow().getText()) + ".png"));
+        String imgPath = "icon/" + nowWeather.getNow().getIcon() + ".png";
+        System.out.println(imgPath);
+
+        img_one.setImage(new Image("/icon/104.png"));
+
 
     }
 
@@ -298,9 +337,18 @@ public class HomeController {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                ThreeDayWeatherModel threeDayWeathers = new Gson().fromJson(response.body().string(), ThreeDayWeatherModel.class);
+                String string = response.body().string();
+                ThreeDayWeatherModel threeDayWeathers = new Gson().fromJson(string, ThreeDayWeatherModel.class);
+                System.out.println("-----------------");
+                System.out.println(string);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateOtherPage(threeDayWeathers);
 
 
+                    }
+                });
             }
         });
     }
@@ -336,20 +384,25 @@ public class HomeController {
      * 切换到输入模式
      */
     public void changeInput() {
-        top_city.setVisible(false);
-        bt_ok.setVisible(true);
-        bt_city.setVisible(true);
-        select_city.setVisible(true);
+//        top_city.setVisible(false);
+//        bt_ok.setVisible(true);
+//        bt_city.setVisible(true);
+//        select_city.setVisible(true);
+        top_info.setVisible(false);
+        top_input.setVisible(true);
     }
 
     /**
      * 退出输入模式
      */
     public void exitInput() {
-        top_city.setVisible(true);
-        bt_ok.setVisible(false);
-        bt_city.setVisible(false);
-        select_city.setVisible(false);
+//        top_city.setVisible(true);
+//        bt_ok.setVisible(false);
+//        bt_city.setVisible(false);
+//        select_city.setVisible(false);
+        top_info.setVisible(true);
+        top_input.setVisible(false);
+
     }
 
 

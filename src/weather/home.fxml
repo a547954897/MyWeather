@@ -1,55 +1,271 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weather.HomeController">
-   <children>
-      <Label fx:id="top_date" layoutX="14.0" layoutY="14.0" text="日期" />
-      <Label fx:id="top_city" layoutX="555.0" layoutY="14.0" onMouseClicked="#click_city" text="城市" />
-      <Pane id="weather_1" layoutY="30.0" prefHeight="370.0" prefWidth="200.0">
-         <children>
-            <Separator layoutX="200.0" layoutY="10.0" orientation="VERTICAL" prefHeight="300.0" />
-            <ImageView fx:id="img_one" fitHeight="70.0" fitWidth="70.0" layoutX="65.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="te_current" layoutX="48.0" layoutY="87.0" text="0">
-               <font>
-                  <Font size="36.0" />
-               </font>
-            </Label>
-            <Label layoutX="95.0" layoutY="95.0" text="°C" />
-            <Label fx:id="te_current_text" layoutX="95.0" layoutY="112.0" text="晴（实时）" />
-            <Label layoutX="85.0" layoutY="177.0" text="Label" />
-            <Label layoutX="80.0" layoutY="209.0" text="Label" />
-            <Label layoutX="86.0" layoutY="249.0" text="Label" />
-         </children>
-      </Pane>
-      <Pane id="weather_2" layoutX="200.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
-         <children>
-            <Label fx:id="mon_two" layoutX="35.0" layoutY="22.0" text="周X" />
-            <ImageView fx:id="img_two" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
-            <Separator orientation="VERTICAL" prefHeight="300.0" />
-            <Label fx:id="date_two" layoutX="21.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
-         </children></Pane>
-      <Pane id="weather_3" layoutX="300.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
-         <children>
-            <ImageView fx:id="img_three" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
-            <Separator orientation="VERTICAL" prefHeight="300.0" />
-            <Label fx:id="mon_three" layoutX="35.0" layoutY="22.0" text="周X" />
-            <Label fx:id="date_three" layoutX="24.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
-         </children></Pane>
-      <Pane id="weather_4" layoutX="400.0" layoutY="30.0" prefHeight="370.0" prefWidth="100.0">
-         <children>
-            <Separator orientation="VERTICAL" prefHeight="300.0" />
-            <ImageView fx:id="img_four" fitHeight="70.0" fitWidth="70.0" layoutX="15.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="mon_four" layoutX="35.0" layoutY="22.0" text="周X" />
-            <Label fx:id="date_four" layoutX="21.0" layoutY="37.0" text="11月14日" textFill="#6f6f6f" />
-         </children></Pane>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weather.HomeController">
+    <children>
+        <VBox prefHeight="400.0" prefWidth="500.0">
+            <children>
 
-      <Button fx:id="bt_city" layoutX="510.0" layoutY="14.0" onMouseClicked="#bt_click_city" prefWidth="50.0" text="搜索" visible="false" />
-      <Button fx:id="bt_ok" layoutX="570.0" layoutY="14.0" onMouseClicked="#bt_click_ok" prefWidth="50.0" text="确定" visible="false" />
-      <ComboBox fx:id="select_city" editable="true" layoutX="200.0" layoutY="14.0" prefWidth="300.0" visible="false" />
+                <Pane fx:id="top_input" prefHeight="50.0" prefWidth="500.0" visible="false">
+                    <HBox alignment="TOP_RIGHT" prefHeight="50.0" prefWidth="500.0">
+                        <children>
+                            <ComboBox fx:id="select_city" editable="true" prefWidth="200.0">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </ComboBox>
+                            <Button fx:id="bt_city" onMouseClicked="#bt_click_city" prefWidth="50.0" text="搜索">
+                                <HBox.margin>
+                                    <Insets left="10.0" />
+                                </HBox.margin>
+                            </Button>
+                            <Button fx:id="bt_ok" onMouseClicked="#bt_click_ok" prefWidth="50.0" text="确定" />
+                        </children>
+                        <padding>
+                            <Insets top="10.0" />
+                        </padding>
+                    </HBox>
 
-   </children>
+                </Pane>
+                <HBox fx:id="top_info" prefHeight="50.0" prefWidth="500.0">
+                    <children>
+                        <HBox prefHeight="50.0" prefWidth="250.0">
+                            <children>
+                                <Label fx:id="top_date" text="日期">
+                                    <HBox.margin>
+                                        <Insets left="10.0" top="10.0" />
+                                    </HBox.margin>
+                                </Label>
+                            </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" prefHeight="50.0" prefWidth="250.0">
+                            <children>
+                                <Label fx:id="top_city" onMouseClicked="#click_city" text="城市">
+                                    <HBox.margin>
+                                        <Insets right="10.0" top="10.0" />
+                                    </HBox.margin>
+                                </Label>
+                            </children>
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </HBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="350.0" prefWidth="500.0">
+                    <children>
+                        <VBox prefWidth="200.0">
+                            <children>
+                                <HBox alignment="CENTER" prefHeight="100.0">
+                                    <children>
+                                        <ImageView fx:id="img_one" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                            <HBox.margin>
+                                                <Insets top="10.0" />
+                                            </HBox.margin>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER">
+                                    <children>
+                                        <Label fx:id="te_current" alignment="CENTER" text="0">
+                                            <font>
+                                                <Font size="50.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="20.0" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <VBox>
+                                            <children>
+                                                <Label text="°C">
+                                                    <font>
+                                                        <Font size="18.0" />
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <Label fx:id="te_current_text" text="晴（实时）">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets />
+                                                    </VBox.margin>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                    <padding>
+                                        <Insets top="20.0" />
+                                    </padding>
+                                </HBox>
+                                <VBox alignment="CENTER" prefHeight="100.0">
+                                    <children>
+                                        <Label fx:id="one_temp" text="0°C~0°C">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="one_wea" text="XX转XX">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="one_wind" text="西风5级">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets top="20.0" />
+                                    </VBox.margin>
+                                </VBox>
+                            </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="100.0" />
+                        <VBox prefWidth="150.0">
+                            <children>
+                                <VBox alignment="CENTER" prefHeight="200.0">
+                                    <children>
+                                        <Label fx:id="mon_two" text="周X">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="date_two" alignment="CENTER" text="X月X日" textAlignment="CENTER" textFill="#6f6f6f">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="5.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <ImageView fx:id="img_two" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                            <VBox.margin>
+                                                <Insets top="30.0" />
+                                            </VBox.margin>
+                                        </ImageView>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </VBox>
+                                <VBox alignment="CENTER" prefHeight="100.0">
+                                    <children>
+                                        <Label fx:id="two_temp" text="0°C~0°C">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="two_wea" text="XX转XX">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="two_wind" text="西风5级">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="100.0" />
+                        <VBox prefWidth="150.0">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                            <children>
+                                <HBox alignment="TOP_RIGHT" />
+                                <VBox alignment="CENTER" prefHeight="200.0">
+                                    <children>
+                                        <Label fx:id="mon_three" text="周X">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="date_three" text="X月X日" textAlignment="CENTER" textFill="#6f6f6f">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="5.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <ImageView fx:id="img_three" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                            <VBox.margin>
+                                                <Insets top="30.0" />
+                                            </VBox.margin>
+                                        </ImageView>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </VBox>
+                                <VBox alignment="CENTER" prefHeight="100.0">
+                                    <children>
+                                        <Label fx:id="three_temp" text="0°C~0°C">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="three_wea" text="XX转XX">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                        <Label fx:id="three_wind" text="西风5级">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="50.0" />
+                    </VBox.margin>
+                </HBox>
+
+            </children>
+        </VBox>
+
+    </children>
 </Pane>

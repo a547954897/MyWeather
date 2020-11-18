@@ -24,7 +24,7 @@ public class Main extends Application {
         Parent root = fxmlLoader.load();
 
         primaryStage.setTitle("天气系统");
-        primaryStage.setScene(new Scene(root,670,370));
+        primaryStage.setScene(new Scene(root));
 
         initHomePage(fxmlLoader.getController());
 
