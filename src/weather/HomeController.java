@@ -13,19 +13,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import model.GetCityModel;
 import model.NowWeatherModel;
 import model.SeachCityModel;
 import model.ThreeDayWeatherModel;
 import okhttp3.*;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HomeController {
@@ -46,6 +52,7 @@ public class HomeController {
 
     SeachCityModel cityData; // api获取的搜索城市数据
     NowWeatherModel nowWeatherList; // 实况数据
+    GetCityModel getCityModel; //根据ip获取城市
 
 
     final static String KEY = "5e47b2143db54d4d8279c7c853b5f0b0";
@@ -74,6 +81,7 @@ public class HomeController {
      * 初始化页面
      */
     public void initPage() {
+        getCityByIp(getV4IP());
         initWeekDays();
         // 下拉框点击事件监听
         select_city.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -101,6 +109,88 @@ public class HomeController {
         });*/
 
     }
+
+    /**
+     * 通过ip获取城市
+     *
+     * @param ip
+     */
+    public void getCityByIp(String ip) {
+        String url = "http://apis.juhe.cn/ip/ipNew?key=f9f633b66c12a2a3fa1494570c6e4857&ip=" + ip;
+        System.out.println(url);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String s = response.body().string();
+                getCityModel = new Gson().fromJson(s, GetCityModel.class);
+//                System.out.println(getCityModel.getResult().getCity());
+//                System.out.println(getCityModel.getResult().getProvince());
+
+                getCityByIpSetPage(getCityModel.getResult().getCity()+"&adm="+getCityModel.getResult().getProvince());
+
+
+
+            }
+        });
+
+
+    }
+
+
+    /**
+     * 获取本机的外网ip地址
+     *
+     * @return
+     */
+    public String getV4IP() {
+        String ip = "";
+        String chinaz = "http://ip.chinaz.com";
+
+        StringBuilder inputLine = new StringBuilder();
+        String read = "";
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        BufferedReader in = null;
+        try {
+            url = new URL(chinaz);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            while ((read = in.readLine()) != null) {
+                inputLine.append(read + "\r\n");
+            }
+            //System.out.println(inputLine.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Pattern p = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
+        Matcher m = p.matcher(inputLine.toString());
+        if (m.find()) {
+            String ipstr = m.group(1);
+            ip = ipstr;
+            //System.out.println(ipstr);
+        }
+        return ip;
+    }
+
 
     /**
      * 初始化周数
@@ -151,6 +241,7 @@ public class HomeController {
      * 根据输入获取查询城市列表
      */
     public void getCityDateByName(String in_text) {
+        System.out.println(":::::"+citySeachInfoUrl + in_text);
 
         //如果输入框为空，弹出提示框
         if (in_text.length() < 1) {
@@ -177,6 +268,46 @@ public class HomeController {
                     public void run() {
                         //更新下拉框
                         updateCombobox(cityData);
+                    }
+                });
+
+            }
+        });
+    }
+
+    /**
+     * 通过本机ip获取城市 再根据获取的城市更新ui
+     * @param in_text
+     */
+    public void getCityByIpSetPage(String in_text) {
+        System.out.println(":::::"+citySeachInfoUrl + in_text);
+
+        //如果输入框为空，弹出提示框
+        if (in_text.length() < 1) {
+            JOptionPane.showMessageDialog(null, "请输入城市再点击搜索");
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(citySeachInfoUrl + in_text)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                cityData = new Gson().fromJson(response.body().string(), SeachCityModel.class);
+                getOtherWeather(cityData.getLocation().get(0).getId());
+                getNowWeatherDate(cityData.getLocation().get(0).getId());
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        top_city.setText(cityData.getLocation().get(0).getName() + "[切换城市]"); //城市名
                     }
                 });
 
@@ -241,7 +372,7 @@ public class HomeController {
      */
     public void updateOtherPage(ThreeDayWeatherModel threeDayWeatherModel) {
         List<ThreeDayWeatherModel.DailyBean> list = threeDayWeatherModel.getDaily();
-        one_temp.setText(list.get(0).getTempMin()+"°C~"+list.get(0).getTempMax());
+        one_temp.setText(list.get(0).getTempMin() + "°C~" + list.get(0).getTempMax());
         two_temp.setText(list.get(1).getTempMin() + "°C~" + list.get(1).getTempMax());
         three_temp.setText(list.get(2).getTempMin() + "°C~" + list.get(2).getTempMax());
         one_wea.setText(list.get(0).getTextDay() + "转" + list.get(0).getTextNight());
@@ -264,6 +395,7 @@ public class HomeController {
      * @param locationId
      */
     public void getNowWeatherDate(String locationId) {
+        System.out.println("::::"+ getlocalWeatherUrl+locationId);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(getlocalWeatherUrl + locationId)
